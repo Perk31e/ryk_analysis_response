@@ -1,0 +1,222 @@
+<!-- Local rules -->
+
+<!--
+Wazuh Local Rules for RYK Ransomware Detection
+Based on Sysmon events from sysmon_ryk_client.xml
+-->
+
+<group name="sysmon,ryk_ransomware,">
+
+    <!-- Process Creation Events (Event ID 1) -->
+
+    <!-- Office Macro Execution -->
+    <rule id="100010" level="12">
+        <if_group>sysmon_event1</if_group>
+        <field name="win.eventdata.parentImage">WINWORD.EXE</field>
+        <field name="win.eventdata.commandLine">cmd.exe /c
+            %localappdata%\SystemFailureReporter\SystemFailureReporter.exe</field>
+        <description>RYK Ransomware: Office macro executing SystemFailureReporter</description>
+        <mitre>
+            <id>T1566.001</id>
+            <id>T1059.005</id>
+        </mitre>
+    </rule>
+
+    <!-- SystemFailureReporter Execution -->
+    <rule id="100011" level="13">
+        <if_group>sysmon_event1</if_group>
+        <field name="win.eventdata.image">SystemFailureReporter.exe</field>
+        <description>RYK Ransomware: SystemFailureReporter.exe execution detected</description>
+        <mitre>
+            <id>T1036.005</id>
+        </mitre>
+    </rule>
+
+    <!-- UAC Bypass via Fodhelper -->
+    <rule id="100012" level="13">
+        <if_group>sysmon_event1</if_group>
+        <field name="win.eventdata.parentImage">fodhelper.exe</field>
+        <description>RYK Ransomware: UAC bypass attempt via fodhelper.exe</description>
+        <mitre>
+            <id>T1548.002</id>
+        </mitre>
+    </rule>
+
+    <!-- Task Scheduler Manipulation -->
+    <rule id="100013" level="12">
+        <if_group>sysmon_event1</if_group>
+        <field name="win.eventdata.image">schtasks.exe</field>
+        <field name="win.eventdata.commandLine">SystemFailureReporter</field>
+        <description>RYK Ransomware: Task scheduler manipulation for persistence</description>
+        <mitre>
+            <id>T1053.005</id>
+        </mitre>
+    </rule>
+
+    <!-- Suspicious Path Execution -->
+    <rule id="100014" level="11">
+        <if_group>sysmon_event1</if_group>
+        <field name="win.eventdata.image">\\AppData\\Local\\Temp\\</field>
+        <description>RYK Ransomware: Execution from suspicious Temp directory</description>
+        <mitre>
+            <id>T1036.005</id>
+        </mitre>
+    </rule>
+
+    <rule id="100015" level="11">
+        <if_group>sysmon_event1</if_group>
+        <field name="win.eventdata.image">\\AppData\\Local\\SystemFailureReporter\\</field>
+        <description>RYK Ransomware: Execution from SystemFailureReporter directory</description>
+        <mitre>
+            <id>T1036.005</id>
+        </mitre>
+    </rule>
+
+</group>
+
+<group name="sysmon,ryk_ransomware_files,">
+
+    <!-- File Creation Events (Event ID 11) -->
+
+    <!-- Initial Infection Vector -->
+    <rule id="100030" level="10">
+        <if_group>sysmon_event_11</if_group>
+        <field name="win.eventdata.targetFilename">카카오크루_202411_하반기_경력채용.doc</field>
+        <description>RYK Ransomware: Initial infection vector document detected</description>
+        <mitre>
+            <id>T1566.001</id>
+        </mitre>
+    </rule>
+
+    <!-- Malware Artifacts -->
+    <rule id="100031" level="12">
+        <if_group>sysmon_event_11</if_group>
+        <field name="win.eventdata.targetFilename">b.doc</field>
+        <description>RYK Ransomware: Malware artifact b.doc created</description>
+    </rule>
+
+    <rule id="100032" level="12">
+        <if_group>sysmon_event_11</if_group>
+        <field name="win.eventdata.targetFilename">update.xml</field>
+        <description>RYK Ransomware: Malware artifact update.xml created</description>
+    </rule>
+
+    <!-- Wallpaper Change -->
+    <rule id="100033" level="11">
+        <if_group>sysmon_event_11</if_group>
+        <field name="win.eventdata.targetFilename">w.png</field>
+        <description>RYK Ransomware: Wallpaper file w.png created</description>
+        <mitre>
+            <id>T1491.001</id>
+        </mitre>
+    </rule>
+
+    <!-- Ransom Note -->
+    <rule id="100034" level="13">
+        <if_group>sysmon_event_11</if_group>
+        <field name="win.eventdata.targetFilename">readme.txt</field>
+        <description>RYK Ransomware: Ransom note readme.txt created</description>
+        <mitre>
+            <id>T1486</id>
+        </mitre>
+    </rule>
+
+</group>
+
+<group name="sysmon,ryk_ransomware_C2_DNS,">
+
+    <!-- DNS Events (Event ID 22) -->
+
+    <!-- C2 Communication -->
+    <rule id="100020" level="13">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.queryName">drmon.chickenkiller.com</field>
+        <description>RYK Ransomware: DNS query to C2 server drmon.chickenkiller.com</description>
+        <mitre>
+            <id>T1071.001</id>
+        </mitre>
+    </rule>
+
+    <rule id="100021" level="13">
+        <if_sid>61603</if_sid>
+        <field name="win.eventdata.queryResults">10.10.10.134</field>
+        <description>RYK Ransomware: DNS resolution to C2 IP address</description>
+        <mitre>
+            <id>T1071.001</id>
+        </mitre>
+    </rule>
+
+</group>
+
+<group name="syscheck,ryk_extension, ryk_ransomware_registry,">
+    <!-- Encrypted Files via Syscheck -->
+    <rule id="100035" level="14">
+        <if_sid>550</if_sid>
+        <field name="file" type="pcre2">\.ryk$</field>
+        <description>RYK Ransomware: File encrypted with .ryk extension</description>
+        <mitre>
+            <id>T1486</id>
+        </mitre>
+    </rule>
+    <!-- Registry Events via Syscheck -->
+    <rule id="100040" level="13">
+        <if_sid>550</if_sid>
+        <field name="file">HKEY_LOCAL_MACHINE\\Software\\Classes\\ms-settings\\Shell\\Open\\Command</field>
+        <description>RYK Ransomware: UAC bypass registry change detected (HKLM)</description>
+        <mitre>
+            <id>T1548.002</id>
+            <id>T1112</id>
+        </mitre>
+    </rule>
+    <rule id="100041" level="13">
+        <if_sid>550</if_sid>
+        <field name="file">HKEY_CURRENT_USER\\Software\\Classes\\ms-settings\\Shell\\Open\\Command</field>
+        <description>RYK Ransomware: UAC bypass registry change detected (HKCU)</description>
+        <mitre>
+            <id>T1548.002</id>
+            <id>T1112</id>
+        </mitre>
+    </rule>
+</group>
+
+<group name="sysmon,ryk_ransomware_correlation,">
+
+    <!-- Correlation Rules -->
+
+    <!-- Multiple RYK Indicators -->
+    <rule id="100050" level="15">
+        <if_matched_sid>100010</if_matched_sid>
+        <if_matched_sid>100011</if_matched_sid>
+        <if_matched_sid>100034</if_matched_sid>
+        <same_source_ip />
+        <description>RYK Ransomware: Multiple indicators detected - HIGH CONFIDENCE</description>
+        <mitre>
+            <id>T1486</id>
+        </mitre>
+    </rule>
+
+    <!-- Complete Attack Chain -->
+    <rule id="100051" level="15">
+        <if_matched_sid>100010</if_matched_sid>
+        <if_matched_sid>100012</if_matched_sid>
+        <if_matched_sid>100020</if_matched_sid>
+        <if_matched_sid>100035</if_matched_sid>
+        <same_source_ip />
+        <description>RYK Ransomware: Complete attack chain detected - CRITICAL</description>
+        <mitre>
+            <id>T1486</id>
+        </mitre>
+    </rule>
+
+    <!-- Early Stage Detection -->
+    <rule id="100052" level="12">
+        <if_matched_sid>100010</if_matched_sid>
+        <if_matched_sid>100020</if_matched_sid>
+        <same_source_ip />
+        <description>RYK Ransomware: Initial infection indicators detected</description>
+        <mitre>
+            <id>T1071.001</id>
+        </mitre>
+    </rule>
+
+</group>
