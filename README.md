@@ -56,7 +56,7 @@ Configure FakeDNS to resolve drmon.chickenkiller.com to the REMNUX IP address:
 ```bash
 root@remnux:/home/remnux# fakedns --resolve drmon.chickenkiller.com 10.10.10.134
 ```
-![ReMNUX - fakedns](https://github.com/user-attachments/assets/a8e6d216-71f3-4e2d-8356-0748e32bfbc5)  
+![ReMNUX - fakedns](https://github.com/user-attachments/assets/a97bfc07-0145-4ee3-8faf-1b1546393558)  
 (ReMNUX - fakedns)
 
 *Note: Since the original C2 server (182.228.44.206) is no longer active, we redirect DNS queries to our REMNUX host (10.10.10.134) to simulate the C2 infrastructure. This allows us to recreate the complete attack chain for security rule development and testing purposes.*
@@ -76,7 +76,7 @@ root@remnux:/home/remnux/malware# python3 -m http.server 80
 ```
 *Note: Place the svchost file in the malware directory before starting the web server*
 
-![ReMNUX - Start Web Service to Response GET Method](https://github.com/user-attachments/assets/861207c5-ae50-42a3-be70-8973cb3ef46d)  
+![ReMNUX - Start Web Service to Response GET Method](https://github.com/user-attachments/assets/425ec6c3-c833-4cc8-933e-05245ba4b8e8)  
 (ReMNUX - Start Web Service to Response GET Method)
 
 *Note: The upper image shows the client successfully retrieving svchost via GET method. The subsequent POST request shows the client attempting to send AES key data in JSON format `{"enc_data":"AES_KEY_VALUE","id":"uuid"}`, but since the basic Python server only accepts GET requests, this results in an error.*
@@ -94,7 +94,7 @@ Source: ryk_analysis_response/SecuritySolution_Rules/for client/ossec.conf
 2. Navigate to "Manage" tab → "Restart"
 3. Verify status: "Manage" tab → "Status"
 
-![Client - Restart Wazuh Agent](https://github.com/user-attachments/assets/312562a6-ec02-4ecd-8a8e-f0146e34c2a1)  
+![Client - Restart Wazuh Agent](https://github.com/user-attachments/assets/e6269ed7-463e-4add-a06c-c3281d85bedb)  
 (Client - Restart Wazuh Agent)
 
 **Configure Sysmon:**
@@ -117,7 +117,7 @@ File: /var/ossec/etc/rules/local_rules.xml
 Source: ryk_analysis_response/SecuritySolution_Rules/for server/local_rules.xml
 ```
 
-![Wazuh Server - local_rules.xml location](https://github.com/user-attachments/assets/bab9972b-d97d-4bdb-9444-b4ede0de21fc)  
+![Wazuh Server - local_rules.xml location](https://github.com/user-attachments/assets/a0f9d810-d326-4ae5-9184-5951b21f21b8)  
 (Wazuh Server - local_rules.xml location)
 
 **Restart Wazuh Manager:**
@@ -125,7 +125,7 @@ Source: ryk_analysis_response/SecuritySolution_Rules/for server/local_rules.xml
 systemctl restart wazuh-manager
 ```
 
-![Wazuh Server - Checking wazuh-manager status](https://github.com/user-attachments/assets/783ea932-b26e-4a06-b480-ebd721b7c5a2)  
+![Wazuh Server - Checking wazuh-manager status](https://github.com/user-attachments/assets/58dc5202-dda1-4737-b064-623349bfbb13)  
 (Wazuh Server - Checking wazuh-manager status)
 
 ### 4. Execution
@@ -137,19 +137,19 @@ This setup successfully simulates the complete RYK ransomware attack chain while
 
 ### Proof of Detection Results
 
-![Client - Sysmon Detected fodhelper process](https://github.com/user-attachments/assets/c6e5d44c-b159-46d5-8c30-d8753f4cc63a)  
+![Client - Sysmon Detected fodhelper process](https://github.com/user-attachments/assets/a16c0aa5-38fd-487e-a1ac-c0cb0312da0d)  
 (Client - Sysmon Detected fodhelper process)
 
-![Client - Sysmon Detected C2 DNS Resolution](https://github.com/user-attachments/assets/60c8f48e-ba2b-406e-a3b4-423134c98f8a)  
+![Client - Sysmon Detected C2 DNS Resolution](https://github.com/user-attachments/assets/18e31c41-cafe-4c45-bfa5-57c2a1bc085a)  
 (Client - Sysmon Detected C2 DNS Resolution)
 
-![Wazuh Server - Wazuh+Elastic ELK Dashboard](https://github.com/user-attachments/assets/bc622002-5c8c-43da-b8ce-24417a9e1c46)
+![Wazuh Server - Wazuh+Elastic ELK Dashboard](https://github.com/user-attachments/assets/ba11af4a-46a0-43e7-aba1-83773559f72a)
 (Wazuh Server - Wazuh+Elastic ELK Dashboard)
 
-![Wazuh Server - Detected Suspicious Activities from RYK ransomware](https://github.com/user-attachments/assets/0fa73598-9653-4835-9b89-5636f68f7e74)  
+![Wazuh Server - Detected Suspicious Activities from RYK ransomware](https://github.com/user-attachments/assets/2cd1ba15-c50c-455e-9c2a-b5dbb64d2d31)  
 (Wazuh Server - Detected Suspicious Activities from RYK ransomware)
 
-![Wazuh Server - Detailed Log](https://github.com/user-attachments/assets/29a41a85-5544-46ac-93e5-56a955ddd7b4)  
+![Wazuh Server - Detailed Log](https://github.com/user-attachments/assets/f17fc2a5-ed1d-43e9-8dab-9e7a8850646c)  
 (Wazuh Server - Detailed Log)
 
 ### Update Log
