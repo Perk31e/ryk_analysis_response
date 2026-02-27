@@ -70,7 +70,7 @@
     <!-- Event ID 11 == FileCreate. -->
     <FileCreate onmatch="include">
       <!-- Initial infection vector -->
-      <TargetFilename condition="end with">카카오크루_202411_하반기_경력채용.doc</TargetFilename>
+      <TargetFilename condition="end with">ABC크루_202411_하반기_경력채용.doc</TargetFilename>
 
       <!-- SystemFailureReporter artifacts in specific location -->
       <TargetFilename condition="contains">\AppData\Local\SystemFailureReporter\b.doc</TargetFilename>
